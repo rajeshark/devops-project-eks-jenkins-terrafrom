@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-deployment
+  namespace: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      containers:
+      - name: product
+        image: 775826428475.dkr.ecr.ap-south-1.amazonaws.com/product:latest
+        ports:
+        - containerPort: 5001
+        envFrom:
+        - configMapRef:

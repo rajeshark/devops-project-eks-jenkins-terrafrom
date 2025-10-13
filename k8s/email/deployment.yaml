@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-deployment
+  namespace: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: email
+  template:
+    metadata:
+      labels:
+        app: email
+    spec:
+      containers:
+      - name: email
+        image: 775826428475.dkr.ecr.ap-south-1.amazonaws.com/email:latest
+        ports:
+        - containerPort: 5006
+        envFrom:
+        - configMapRef:
+            name: email-config
