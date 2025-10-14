@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+      - name: payment
+        image: ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/devops-project-payment:latest
+        ports:
+        - containerPort: 5004
+        env:
+        - name: PORT
+          value: "5004"
+        - name: NODE_ENV
+          value: "development"
+        - name: DB_HOST
+          value: "YOUR_RDS_ENDPOINT"  # Will be replaced by Jenkins
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "postgres"
+        - name: DB_USER
+          value: "postgres"
+        - name: DB_PASSWORD
+          value: "12345678"
+        - name: STRIPE_PUBLISHABLE_KEY
+          value: "pk_test_51SEWfbGUJ7v3D9GXVs5sPIBEY08wZrpGmeuko8YClRovgbeQkkYJ2NpxLMtM3RyA8v7NSKM4cE8mTLthWafiYGv500lPgVJb3n"
+        - name: STRIPE_SECRET_KEY
+          value: "sk_test_51SEWfbGUJ7v3D9GXpq0WxWjuI8KYKCXDooT7V72D3SROVlE8MnQeD78cT9DQVbUvlbMa7NEwpoaL0BBI399wJYm600UKiLyER6"
+        - name: STRIPE_WEBHOOK_SECRET
+          value: "whsec_jeseduYOuVyhqUJTaYrfQFbIRTy9baiB"
+        - name: JWT_SECRET
+          value: "014ffc23305636ca26ee50d7dc56768c7ecbab7f7c9478f262d5591d2aacd5bf193ebbf6b77ccf462811f50588b90396ef58e62dad23e82e3f127e0d54964f23"
+        - name: ORDERS_SERVICE_URL
+          value: "http://YOUR_ALB_DNS"  # Will be replaced by Jenkins
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5004
+          initialDelaySeconds: 30
+          periodSeconds: 10
