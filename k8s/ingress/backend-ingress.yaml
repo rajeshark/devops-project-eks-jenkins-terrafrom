@@ -11,7 +11,7 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /health    # Health check path
     alb.ingress.kubernetes.io/healthcheck-port: traffic-port
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
-    alb.ingress.kubernetes.io/security-groups: "sg-09d87dec92a8737bc" # Replace with your ALB SG
+    alb.ingress.kubernetes.io/security-groups: "<ALB_SG_ID>" # Replace with your ALB SG
 spec:
   rules:
     - http:
