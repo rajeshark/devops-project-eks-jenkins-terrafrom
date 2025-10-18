@@ -75,7 +75,7 @@ resource "aws_iam_role_policy_attachment" "fargate_execution_policy" {
 # --------------------------
 # 5️⃣ IRSA ROLE FOR SERVICE ACCOUNT FOR PRODUCT POD
 # --------------------------
-resource "aws_iam_role" "prodcut_pod_sa_role" {
+resource "aws_iam_role" "product_pod_sa_role" {
   name = "${var.project_name}-prodcut-pod-sa-role"
 
   assume_role_policy = jsonencode({
