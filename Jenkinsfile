@@ -34,6 +34,7 @@ pipeline {
                     export TF_IN_AUTOMATION=1
                     CLUSTER_NAME=$(terraform output -raw eks_cluster_name)
                     aws eks --region ${AWS_REGION} update-kubeconfig --name $CLUSTER_NAME
+                    kubectl get namespace backend >/dev/null 2>&1 || kubectl create namespace backend
                     kubectl get nodes
                     '''
                 }
