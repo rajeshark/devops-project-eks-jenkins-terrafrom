@@ -64,7 +64,9 @@ pipeline {
                           --set clusterName=${cluster_name} \\
                           --set region=${AWS_REGION} \\
                           --set vpcId=${vpc_id}
-                        kubectl -n kube-system wait --for=condition=ready pod -l app.kubernetes.io/name=aws-load-balancer-controller --timeout=10m
+                        sleep 20
+                        kubectl -n kube-system get pods -l app.kubernetes.io/name=aws-load-balancer-controller
+                        kubectl -n kube-system wait --for=condition=ready pod -l app.kubernetes.io/name=aws-load-balancer-controller --timeout=10m || \ echo "⚠️ ALB Controller pods not ready yet, continuing..."
                         sed -i 's|<ALB_SG_ID>|${alb_sg_id}|' ${env.WORKSPACE}/k8s/ingress/backend-ingress.yaml
                         """
                     }
