@@ -97,7 +97,7 @@ resource "aws_iam_role" "prodcut_pod_sa_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "product_pod_Irsa_policy" {
-  role       = aws_iam_role.alb_controller_role.name
+  role       = aws_iam_role.product_pod_sa_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
