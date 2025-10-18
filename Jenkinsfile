@@ -62,8 +62,6 @@ pipeline {
                         helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \\
                           -n kube-system \\
                           --set clusterName=${cluster_name} \\
-                          --set serviceAccount.create=false \\
-                          --set serviceAccount.name=aws-load-balancer-controller \\
                           --set region=${AWS_REGION} \\
                           --set vpcId=${vpc_id}
                         kubectl -n kube-system wait --for=condition=ready pod -l app.kubernetes.io/name=aws-load-balancer-controller --timeout=10m
