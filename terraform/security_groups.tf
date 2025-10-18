@@ -1,4 +1,3 @@
-# security_groups.tf - FIXED VERSION
 # ALB Security Group
 resource "aws_security_group" "alb_sg" {
     name        = "${var.project_name}-alb-sg"
@@ -33,16 +32,16 @@ resource "aws_security_group" "alb_sg" {
     }
 }
 
-# EKS Security Group
-resource "aws_security_group" "eks-sg" {
-    name        = "${var.project_name}-eks-sg"
+# EKS Security Group for fargate and node group pods
+resource "aws_security_group" "eks_fargate_sg" {
+    name        = "${var.project_name}-eks-fargate-node-sg"
     description = "allow traffic from alb and eks services backends"
     vpc_id      = aws_vpc.main.id
     
     dynamic "ingress" {
         for_each = var.backend_ports
         content {
-            description = "allow alb to eks service ports"
+            description = "allow alb to eks sercice backend pods"
             from_port   = ingress.value
             to_port     = ingress.value
             protocol    = "tcp"
@@ -61,7 +60,33 @@ resource "aws_security_group" "eks-sg" {
         Name = "${var.project_name}-eks-sg"
     }
 }
+#eks  cluster main security group
+resource "aws_security_group" "eks_cluster_sg" {
+    name="${project_name}-eks-cluster-sg"
+    description = "allow kubectl and api aceess "
+    vpc_id=aws_vpc.main.id
 
+    ingress {
+        description = "allow kubectl to connect and api ,fargate pod all to connect"
+        from_port = 443
+        to_port = 443
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+
+    }
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+    tags={
+        Name= "${project_name}-eks-cluster-sg"
+    }
+
+
+  
+}
 # RDS Postgres Security Group - UPDATED for Public Access
 resource "aws_security_group" "RDS-sg" {
     name        = "${var.project_name}-RDS-sg"
@@ -73,16 +98,8 @@ resource "aws_security_group" "RDS-sg" {
         from_port   = 5432
         to_port     = 5432
         protocol    = "tcp"
-        security_groups = [aws_security_group.eks-sg.id]
-    }
-    
-    # ADD THIS: Allow public internet access to RDS
-    ingress {
-        description = "allow public internet to RDS postgres"
-        from_port   = 5432
-        to_port     = 5432
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]  # Allow from anywhere
+        security_groups = [aws_security_group.eks-sg.id,aws_security_group.eks_fargate_sg.id]
+        
     }
     
     egress {

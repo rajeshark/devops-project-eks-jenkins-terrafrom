@@ -13,6 +13,7 @@ spec:
       labels:
         app: product
     spec:
+      serviceAccountName: product-service-account
       containers:
       - name: product
         image: <ECR_ACCOUNT>.dkr.ecr.<AWS_REGION>.amazonaws.com/product:latest
