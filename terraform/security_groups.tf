@@ -62,7 +62,7 @@ resource "aws_security_group" "eks_fargate_sg" {
 }
 #eks  cluster main security group
 resource "aws_security_group" "eks_cluster_sg" {
-    name="${project_name}-eks-cluster-sg"
+    name="${var.project_name}-eks-cluster-sg"
     description = "allow kubectl and api aceess "
     vpc_id=aws_vpc.main.id
 
