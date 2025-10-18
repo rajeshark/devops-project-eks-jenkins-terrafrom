@@ -137,16 +137,6 @@ resource "aws_iam_role_policy_attachment" "alb_node_AmazonEKSLoadBalancingPolicy
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy"
   
 }
-# namespace backend crating for fargate profile to run pod
-resource "kubernetes_namespace" "backend" {
-  metadata {
-    name = "backend"
-  }
-
-  depends_on = [aws_eks_cluster.eks_cluster]
-}
-
-
 # --------------------------
 # 7️⃣ Fargate Profile (backend namespace)
 # --------------------------
