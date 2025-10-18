@@ -11,7 +11,7 @@ pipeline {
         EC2_NODEGROUP   = 'devops-project-alb-nodes'
     }
 
-    stages {
+    stages{
 
         stage('Terraform Init & Apply') {
             steps {
