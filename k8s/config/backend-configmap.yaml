@@ -13,6 +13,8 @@ data:
 
   NODE_ENV: "production"
   SEED_SAMPLE_DATA: "true"
+  DB_NAME: "postgres"
+  DB_USER: "postgres"
 
   AWS_REGION: "ap-south-1"
   S3_BUCKET_NAME: "devops-project-frontend-rajesh"
@@ -24,4 +26,4 @@ data:
 
   ORDERS_SERVICE_URL: "REPLACE_ORDERS_ALB_DNS"
 
-  STRIPE_PUBLISHABLE_KEY: ""
+  STRIPE_PUBLISHABLE_KEY: "pk_test_51SIpVAGZNmNwx6zVEaTE9Q7pyCHXQSLHSvkwsZe5DT3jxj9MawefzNQp6dBVPpSCXdeY00FMJP3dYhFGdmuUudOW00kr7BFkv4"
