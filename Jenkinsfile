@@ -42,7 +42,7 @@ pipeline {
 
         stage('Create ALB ServiceAccount') {
             steps {
-                sh "kubectl apply -f ${env.WORKSPACE}/k8s/alb-controller-sa.yaml"
+                sh "kubectl apply -f ${env.WORKSPACE}/k8s/product-sa.yaml"
             }
         }
 
@@ -66,7 +66,7 @@ pipeline {
                           --set region=${AWS_REGION} \\
                           --set vpcId=${vpc_id}
                         kubectl -n kube-system wait --for=condition=ready pod -l app.kubernetes.io/name=aws-load-balancer-controller --timeout=10m
-                        sed -i 's|<ALB_SG_ID>|${alb_sg_id}|' ${env.WORKSPACE}/k8s/ingress/backen-ingress.yaml
+                        sed -i 's|<ALB_SG_ID>|${alb_sg_id}|' ${env.WORKSPACE}/k8s/ingress/backend-ingress.yaml
                         """
                     }
                 }
