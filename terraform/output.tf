@@ -11,7 +11,7 @@ output "private_subnets" {
 }
 
 output "eks_sg_id" {
-  value = aws_security_group.eks_fargate_sg.id
+  value = aws_security_group.eks_cluster_sg.id
 }
 
 output "rds_sg_id" {
