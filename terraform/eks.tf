@@ -137,7 +137,7 @@ resource "aws_iam_role_policy_attachment" "alb_node_AmazonEKSLoadBalancingPolicy
   policy_arn = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
   
 }
-resource "aws_iam_role_policy_attachment" "alb_node_AmazonEKSLoadBalancingPolicy" {
+resource "aws_iam_role_policy_attachment" "alb_node_amazonec2fullacess" {
   role  =aws_iam_role.alb_node_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
   
