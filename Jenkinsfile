@@ -66,7 +66,7 @@ pipeline {
                           --set region=${AWS_REGION} \\
                           --set vpcId=${vpc_id}
                         kubectl -n kube-system wait --for=condition=ready pod -l app.kubernetes.io/name=aws-load-balancer-controller --timeout=10m
-                        sed -i 's|<ALB_SG_ID>|${alb_sg_id}|' ${env.WORKSPACE}/k8s/ingress/backend-ingress.yaml
+                        sed -i 's|<ALB_SG_ID>|${alb_sg_id}|' ${env.WORKSPACE}/k8s/ingress/backen-ingress.yaml
                         """
                     }
                 }
@@ -176,7 +176,11 @@ pipeline {
     }
 
     post {
-        success { echo 'Deployment to EKS + ALB + frontend S3 complete!' }
-        failure { echo 'Deployment failed.' }
+        success { 
+            echo 'Deployment to EKS + ALB + frontend S3 complete!' 
+        }
+        failure { 
+            echo 'Deployment failed.' 
+        }
     }
 }
