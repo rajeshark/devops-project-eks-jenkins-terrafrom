@@ -4,4 +4,4 @@ metadata:
   name: product-service-account
   namespace: backend
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::<your-account-id>:role/devops-project-prodcut-pod-sa-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::775826248485:role/devops-project-prodcut-pod-sa-role
