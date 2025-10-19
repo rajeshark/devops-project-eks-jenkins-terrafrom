@@ -15,6 +15,7 @@ data:
   SEED_SAMPLE_DATA: "true"
   DB_NAME: "postgres"
   DB_USER: "postgres"
+  AWS_SDK_LOAD_CONFIG: "1"
 
   AWS_REGION: "ap-south-1"
   S3_BUCKET_NAME: "devops-project-frontend-rajesh"
