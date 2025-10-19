@@ -99,6 +99,7 @@ resource "aws_security_group" "RDS-sg" {
         to_port     = 5432
         protocol    = "tcp"
         source_security_group_id = aws_security_group.eks_fargate_sg.id
+        security_group_id        = aws_security_group.rds_sg.id
     }
 
       # Allow EKS control plane / nodegroup if needed
@@ -108,6 +109,7 @@ resource "aws_security_group" "RDS-sg" {
     to_port                  = 5432
     protocol                 = "tcp"
     source_security_group_id = aws_security_group.eks_cluster_sg.id
+    security_group_id        = aws_security_group.rds_sg.id
   }
 
     
