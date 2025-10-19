@@ -15,7 +15,7 @@ output "eks_sg_id" {
 }
 
 output "rds_sg_id" {
-  value = aws_security_group.RDS-sg.id
+  value = aws_security_group.RDS_sg.id
 }
 
 output "db_endpoint" {
