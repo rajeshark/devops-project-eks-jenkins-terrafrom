@@ -88,7 +88,7 @@ resource "aws_security_group" "eks_cluster_sg" {
   
 }
 # RDS Postgres Security Group - UPDATED for Public Access
-resource "aws_security_group" "RDS-sg" {
+resource "aws_security_group" "RDS_sg" {
     name        = "${var.project_name}-RDS-sg"
     description = "allow eks and public internet access to RDS"
     vpc_id      = aws_vpc.main.id
