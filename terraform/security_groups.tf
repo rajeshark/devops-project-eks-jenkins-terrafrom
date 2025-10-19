@@ -92,27 +92,6 @@ resource "aws_security_group" "RDS-sg" {
     name        = "${var.project_name}-RDS-sg"
     description = "allow eks and public internet access to RDS"
     vpc_id      = aws_vpc.main.id
-    
-    ingress {
-        description = "allow eks to access rds postgres"
-        from_port   = 5432
-        to_port     = 5432
-        protocol    = "tcp"
-        source_security_group_id = aws_security_group.eks_fargate_sg.id
-        security_group_id        = aws_security_group.rds_sg.id
-    }
-
-      # Allow EKS control plane / nodegroup if needed
-   ingress {
-    description              = "Allow EKS cluster access to PostgreSQL"
-    from_port                = 5432
-    to_port                  = 5432
-    protocol                 = "tcp"
-    source_security_group_id = aws_security_group.eks_cluster_sg.id
-    security_group_id        = aws_security_group.rds_sg.id
-  }
-
-    
     egress {
         from_port   = 0
         to_port     = 0
@@ -124,3 +103,28 @@ resource "aws_security_group" "RDS-sg" {
         Name = "${var.project_name}-RDS-sg"
     }
 }
+# Allow access from EKS Fargate SG
+# ----------------------------
+resource "aws_security_group_rule" "rds_from_fargate" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.eks_fargate_sg.id
+  security_group_id        = aws_security_group.rds_sg.id
+  description              = "Allow Fargate pods to access PostgreSQL"
+}
+
+# ----------------------------
+# Allow access from EKS Cluster SG
+# ----------------------------
+resource "aws_security_group_rule" "rds_from_cluster" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.eks_cluster_sg.id
+  security_group_id        = aws_security_group.rds_sg.id
+  description              = "Allow EKS cluster control plane access"
+}
+
