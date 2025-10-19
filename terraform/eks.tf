@@ -89,7 +89,7 @@ resource "aws_iam_role" "product_pod_sa_role" {
       Condition = {
         StringEquals = {
           # Ensure this matches the serviceaccount you created in kube-system
-          "${replace(aws_iam_openid_connect_provider.eks_oidc.url,"https://","")}:sub" = "system:serviceaccount:backend:"
+          "${replace(aws_iam_openid_connect_provider.eks_oidc.url,"https://","")}:sub" = "system:serviceaccount:backend:product-service-account"
         }
       }
     }]
