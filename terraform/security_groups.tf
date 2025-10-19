@@ -57,7 +57,7 @@ resource "aws_security_group" "eks_fargate_sg" {
     }
     
     tags = {
-        Name = "${var.project_name}-eks-sg"
+        Name = "${var.project_name}-eks-fargate-node-sg"
     }
 }
 #eks  cluster main security group
@@ -98,9 +98,18 @@ resource "aws_security_group" "RDS-sg" {
         from_port   = 5432
         to_port     = 5432
         protocol    = "tcp"
-        security_groups = [aws_security_group.eks_cluster_sg.id,aws_security_group.eks_fargate_sg.id]
-        
+        source_security_group_id = aws_security_group.eks_fargate_sg.id
     }
+
+      # Allow EKS control plane / nodegroup if needed
+   ingress {
+    description              = "Allow EKS cluster access to PostgreSQL"
+    from_port                = 5432
+    to_port                  = 5432
+    protocol                 = "tcp"
+    source_security_group_id = aws_security_group.eks_cluster_sg.id
+  }
+
     
     egress {
         from_port   = 0
