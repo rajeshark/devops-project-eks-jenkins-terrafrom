@@ -111,7 +111,7 @@ resource "aws_security_group_rule" "rds_from_fargate" {
   to_port                  = 5432
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.eks_fargate_sg.id
-  security_group_id        = aws_security_group.rds_sg.id
+  security_group_id        = aws_security_group.RDS_sg.id
   description              = "Allow Fargate pods to access PostgreSQL"
 }
 
@@ -124,7 +124,7 @@ resource "aws_security_group_rule" "rds_from_cluster" {
   to_port                  = 5432
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.eks_cluster_sg.id
-  security_group_id        = aws_security_group.rds_sg.id
+  security_group_id        = aws_security_group.RDS_sg.id
   description              = "Allow EKS cluster control plane access"
 }
 
