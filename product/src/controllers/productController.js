@@ -1,7 +1,8 @@
 const Product = require('../models/Product');
 const { s3 } = require('../config/aws');
+const { DeleteObjectCommand } = require('@aws-sdk/client-s3'); // ADD THIS FOR SDK v3
 
-// Helper function to delete files from S3
+// Helper function to delete files from S3 - UPDATED FOR SDK v3
 const deleteFromS3 = async (fileUrl) => {
   if (!fileUrl || !fileUrl.includes('amazonaws.com')) {
     console.log('Not an S3 URL or URL is empty:', fileUrl);
@@ -18,7 +19,8 @@ const deleteFromS3 = async (fileUrl) => {
       Key: key
     };
 
-    await s3.deleteObject(params).promise();
+    // ✅ AWS SDK v3 syntax - no .promise() needed
+    await s3.send(new DeleteObjectCommand(params));
     console.log('✅ Successfully deleted from S3:', key);
   } catch (error) {
     console.error('❌ Error deleting from S3:', error);
