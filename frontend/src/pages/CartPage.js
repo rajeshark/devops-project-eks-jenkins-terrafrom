@@ -12,7 +12,7 @@ import {
   useElements 
 } from "@stripe/react-stripe-js";
 
-const stripePromise = loadStripe("pk_test_51SEWfbGUJ7v3D9GXVs5sPIBEY08wZrpGmeuko8YClRovgbeQkkYJ2NpxLMtM3RyA8v7NSKM4cE8mTLthWafiYGv500lPgVJb3n");
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 
 // ========== ALL STYLED COMPONENTS ==========
 const Container = styled.div``;
