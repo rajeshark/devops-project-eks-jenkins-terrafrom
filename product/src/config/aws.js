@@ -1,23 +1,20 @@
-const AWS = require('aws-sdk');
-const fs = require('fs');
+const { S3Client } = require('@aws-sdk/client-s3');
 
-// ADD CREDENTIALS - THIS IS WHAT'S MISSING
-if (process.env.AWS_WEB_IDENTITY_TOKEN_FILE && process.env.AWS_ROLE_ARN) {
-  const token = fs.readFileSync(process.env.AWS_WEB_IDENTITY_TOKEN_FILE, 'utf8');
-  AWS.config.credentials = new AWS.WebIdentityCredentials({
-    RoleArn: process.env.AWS_ROLE_ARN,
-    WebIdentityToken: token
-  });
-}
+// AWS SDK v3 automatically handles IRSA credentials
+// No manual credential configuration needed!
 
-// YOUR ORIGINAL CODE
-const s3 = new AWS.S3({
-  region: process.env.AWS_REGION
+const s3 = new S3Client({
+  region: process.env.AWS_REGION || 'ap-south-1'
 });
 
 const s3Config = {
   bucket: process.env.S3_BUCKET_NAME,
-  region: process.env.AWS_REGION
+  region: process.env.AWS_REGION || 'ap-south-1'
 };
+
+// Debug logs
+console.log('AWS SDK v3 S3Client configured');
+console.log('Region:', process.env.AWS_REGION || 'ap-south-1');
+console.log('Bucket:', process.env.S3_BUCKET_NAME);
 
 module.exports = { s3, s3Config };
