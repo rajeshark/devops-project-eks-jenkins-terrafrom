@@ -191,12 +191,17 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { username, email, profile } = req.body; // FIXED: Destructure profile from req.body
+    const { username, email, profile } = req.body;
+
+    console.log('🔄 Update profile request for user:', userId);
+    console.log('📨 Request body:', JSON.stringify(req.body, null, 2));
 
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    console.log('📊 Current user profile:', user.profile);
 
     if (email && email !== user.email) {
       const existingUser = await User.findOne({ where: { email } });
@@ -212,13 +217,26 @@ const updateProfile = async (req, res) => {
       }
     }
 
-    // Update profile data - FIXED: Use the profile object from req.body
+    // FIXED: Create updated profile without the problematic spread operator at the end
     const updatedProfile = {
-      name: profile?.name !== undefined ? profile.name : (user.profile?.name || ''),
-      phone: profile?.phone !== undefined ? profile.phone : (user.profile?.phone || ''),
-      addresses: user.profile?.addresses || [],
-      ...user.profile
+      ...user.profile, // Start with existing profile data (including addresses)
+      ...(profile || {}) // Then override with new profile data
     };
+
+    // Specifically update name and phone if provided in the profile
+    if (profile?.name !== undefined) {
+      updatedProfile.name = profile.name;
+    }
+    if (profile?.phone !== undefined) {
+      updatedProfile.phone = profile.phone;
+    }
+
+    // Ensure addresses array exists
+    if (!updatedProfile.addresses) {
+      updatedProfile.addresses = [];
+    }
+
+    console.log('🆕 Updated profile will be:', updatedProfile);
 
     await user.update({
       ...(username && { username }),
@@ -230,9 +248,11 @@ const updateProfile = async (req, res) => {
       attributes: { exclude: ['password'] }
     });
 
+    console.log('✅ Final updated user:', JSON.stringify(updatedUser.toJSON(), null, 2));
+
     res.json(updatedUser);
   } catch (error) {
-    console.error('Update profile error:', error);
+    console.error('❌ Update profile error:', error);
     res.status(500).json({ error: error.message });
   }
 };
