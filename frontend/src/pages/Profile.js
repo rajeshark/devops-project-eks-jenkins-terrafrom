@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // ADD THIS IMPORT
+import { useNavigate } from "react-router-dom";
 
 const ProfileContainer = styled.div`
   padding: 20px 15px;
@@ -324,7 +324,7 @@ const Profile = () => {
     phone: ""
   });
   
-  const navigate = useNavigate(); // ADD THIS HOOK
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUserProfile();
@@ -383,9 +383,22 @@ const Profile = () => {
 
     try {
       const token = localStorage.getItem('token');
+      
+      // FIXED: Send data in correct structure for backend
+      const updateData = {
+        username: formData.username,
+        email: formData.email,
+        profile: {
+          name: formData.name,
+          phone: formData.phone
+        }
+      };
+
+      console.log('Sending update data:', updateData);
+
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/api/auth/profile`,
-        formData,
+        updateData,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -393,6 +406,7 @@ const Profile = () => {
         }
       );
 
+      console.log('Update response:', response.data);
       setUser(response.data);
       setMessage("Profile updated successfully!");
       
@@ -412,11 +426,11 @@ const Profile = () => {
   };
 
   const handleViewAddresses = () => {
-    navigate('/addresses'); // FIXED: Use navigate instead of window.location
+    navigate('/addresses');
   };
 
   const handleViewOrders = () => {
-    navigate('/orders'); // FIXED: Use navigate instead of window.location
+    navigate('/orders');
   };
 
   if (loading) {
@@ -456,6 +470,14 @@ const Profile = () => {
           <InfoRow>
             <InfoLabel>Role:</InfoLabel>
             <InfoValue>{user?.isAdmin ? 'Admin' : 'Customer'}</InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <InfoLabel>Full Name:</InfoLabel>
+            <InfoValue>{user?.profile?.name || "Not set"}</InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <InfoLabel>Phone Number:</InfoLabel>
+            <InfoValue>{user?.profile?.phone || "Not set"}</InfoValue>
           </InfoRow>
         </UserInfo>
 
