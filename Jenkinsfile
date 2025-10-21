@@ -41,9 +41,10 @@ pipeline {
             }
         }
 
-        stage('Create ALB ServiceAccount') {
+        stage('Create ALB ServiceAccount & product pod service account') {
             steps {
                 sh "kubectl apply -f ${env.WORKSPACE}/k8s/product-sa.yaml"
+                sh "kubectl apply -f ${env.WORKSPACE}/k8s/aws-
             }
         }
 
