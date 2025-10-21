@@ -30,13 +30,28 @@ resource "aws_eks_cluster" "eks_cluster" {
 
   vpc_config {
     subnet_ids         = [aws_subnet.private_1.id, aws_subnet.private_2.id]
-    cluster_security_group_id = aws_security_group.eks_cluster_sg.id
   }
 
   depends_on = [
     aws_iam_role_policy_attachment.eks_cluster_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.eks_cluster_AmazonEKSServicePolicy
   ]
+}
+data "aws_security_group" "eks_cluster_auto_sg" {
+  depends_on = [aws_eks_cluster.eks_cluster]
+  filter {
+    name   = "tag:aws:eks:cluster-name"
+    values = [aws_eks_cluster.eks_cluster.name]
+  }
+}
+resource "aws_security_group_rule" "alb_to_eks_ports" {
+  description              = "ALB to EKS ports"
+  type                     = "ingress"
+  from_port                = ingress.value
+  to_port                  = ingress.value
+  protocol                 = "tcp"
+  security_group_id        = data.aws_security_group.eks_cluster_auto_sg.id
+  source_security_group_id = aws_security_group.alb_sg.id
 }
 
 # 3️⃣ IAM OIDC Provider (required for IRSA)
