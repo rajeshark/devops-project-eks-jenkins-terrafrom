@@ -30,7 +30,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 
   vpc_config {
     subnet_ids         = [aws_subnet.private_1.id, aws_subnet.private_2.id]
-    security_group_ids = [aws_security_group.eks_cluster_sg.id]
+    cluster_security_group_id = aws_security_group.eks_cluster_sg.id
   }
 
   depends_on = [
@@ -101,6 +101,39 @@ resource "aws_iam_role_policy_attachment" "product_pod_Irsa_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
+
+# IRSA role foe aws load balancer controller pod  service account that run in node group 
+resource "aws_iam_role" "aws_load_balancer_controller_sa_role" {
+  name = "${var.project_name}-aws-load-balancer-controller-sa-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Federated = aws_iam_openid_connect_provider.eks_oidc.arn
+      }
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        StringEquals = {
+          # Ensure this matches the serviceaccount you created in kube-system
+          "${replace(aws_iam_openid_connect_provider.eks_oidc.url,"https://","")}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller-service-account"
+        }
+      }
+    }]
+  })
+}
+resource "aws_iam_role_policy_attachment" "alb_node_ElasticLoadBalancingFullAccess" {
+  role  =aws_iam_role.aws_load_balancer_controller_sa_role.name
+  policy_arn = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
+  
+}
+resource "aws_iam_role_policy_attachment" "alb_node_amazonec2fullacess" {
+  role  =aws_iam_role.aws_load_balancer_controller_sa_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+  
+}
+
 # --------------------------
 # 6️⃣ IAM Role for EC2 Node Group (ALB Node Group)
 # --------------------------
@@ -131,18 +164,6 @@ resource "aws_iam_role_policy_attachment" "alb_node_AmazonEKS_CNI_Policy" {
   role       = aws_iam_role.alb_node_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
-
-resource "aws_iam_role_policy_attachment" "alb_node_ElasticLoadBalancingFullAccess" {
-  role  =aws_iam_role.alb_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
-  
-}
-resource "aws_iam_role_policy_attachment" "alb_node_amazonec2fullacess" {
-  role  =aws_iam_role.alb_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-  
-}
-
 # --------------------------
 # 7️⃣ Fargate Profile (backend namespace)
 # --------------------------
@@ -169,7 +190,6 @@ resource "aws_eks_node_group" "alb_node_group" {
   # Attach additional SG here
   remote_access {
     ec2_ssh_key = "my-key"
-    source_security_group_ids = [aws_security_group.eks_fargate_sg.id]
   }
 
   scaling_config {
