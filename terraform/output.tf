@@ -9,11 +9,6 @@ output "public_subnets" {
 output "private_subnets" {
   value = [aws_subnet.private_1.id, aws_subnet.private_2.id]
 }
-
-output "eks_sg_id" {
-  value = aws_security_group.eks_cluster_sg.id
-}
-
 output "rds_sg_id" {
   value = aws_security_group.RDS_sg.id
 }
