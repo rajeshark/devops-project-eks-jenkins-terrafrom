@@ -13,7 +13,7 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/security-groups: "<ALB_SG_ID>" # Replace with your ALB SG
 spec:
-  serviceAccountName: 
+  serviceAccountName: aws-load-balancer-controller-service-account
   rules:
     - http:
         paths:
