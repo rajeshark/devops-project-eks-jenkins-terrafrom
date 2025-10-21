@@ -191,7 +191,7 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { username, email, name, phone } = req.body;
+    const { username, email, profile } = req.body; // FIXED: Destructure profile from req.body
 
     const user = await User.findByPk(userId);
     if (!user) {
@@ -212,10 +212,10 @@ const updateProfile = async (req, res) => {
       }
     }
 
-    // Update profile data
+    // Update profile data - FIXED: Use the profile object from req.body
     const updatedProfile = {
-      name: name !== undefined ? name : (user.profile?.name || ''),
-      phone: phone !== undefined ? phone : (user.profile?.phone || ''),
+      name: profile?.name !== undefined ? profile.name : (user.profile?.name || ''),
+      phone: profile?.phone !== undefined ? profile.phone : (user.profile?.phone || ''),
       addresses: user.profile?.addresses || [],
       ...user.profile
     };
