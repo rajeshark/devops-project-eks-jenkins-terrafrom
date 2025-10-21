@@ -45,7 +45,7 @@ data "aws_security_group" "eks_cluster_auto_sg" {
   }
 }
 resource "aws_security_group_rule" "alb_to_eks_ports" {
-  for_each = toset(var.backend_ports)  # Convert list to set
+  for_each = toset([for port in var.backend_ports : tostring(port)])
   
   description              = "ALB to EKS service on port ${each.value}"
   type                     = "ingress"
