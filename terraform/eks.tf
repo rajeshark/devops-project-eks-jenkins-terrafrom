@@ -44,18 +44,16 @@ data "aws_security_group" "eks_cluster_auto_sg" {
     values = [aws_eks_cluster.eks_cluster.name]
   }
 }
-dynamic "aws_security_group_rule" "alb_to_eks_ports" {
-  for_each = var.backend_ports
-  iterator = port
-  content {
-    description              = "ALB to EKS service on port ${aws_security_group_rule.alb_to_eks_ports.value}"
-    type                     = "ingress"
-    from_port                = port.value
-    to_port                  = port.value
-    protocol                 = "tcp"
-    security_group_id        = data.aws_security_group.eks_cluster_auto_sg.id
-    source_security_group_id = aws_security_group.alb_sg.id
-  }
+resource "aws_security_group_rule" "alb_to_eks_ports" {
+  for_each = toset(var.backend_ports)  # Convert list to set
+  
+  description              = "ALB to EKS service on port ${each.value}"
+  type                     = "ingress"
+  from_port                = each.value
+  to_port                  = each.value
+  protocol                 = "tcp"
+  security_group_id        = data.aws_security_group.eks_cluster_auto_sg.id
+  source_security_group_id = aws_security_group.alb_sg.id
 }
 
 # 3️⃣ IAM OIDC Provider (required for IRSA)
